@@ -34,8 +34,15 @@ namespace linearstory
 			/* operator[]
 			 * Index the underlying array, 2D semantics
 			 */
-			RowPtr operator[](uint32_t ind);
-			const RowPtr operator[](uint32_t ind) const;
+			RowPtr operator[](uint32_t ind)
+			{
+				//todo
+			}
+
+			const RowPtr operator[](uint32_t ind) const
+			{
+				//todo
+			}
 
 			/* solve
 		 	 * Solve this linear system (to be reimplemented according to the corresponding algorithm)
@@ -49,7 +56,10 @@ namespace linearstory
 			 *
 			 * Use instantiation by random device
 			 */
-			LinearSystem();
+			LinearSystem()
+			{
+				//todo
+			}
 	
 		protected:
 			/* RawArray get1DData (host)
