@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdint>
+#include <cstdlib>
 
 #include "linsys.cuh"
 
@@ -13,10 +14,17 @@ int main(int argc, char ** argv)
 	// Argument check
 	if(argc < 2)
 	{
-		fprintf(stdout, "Usage: lu_easy n (n is a dim)");
+		fprintf(stdout, "Usage: lu_easy n (n is a dim)\n");
+		exit(-1);
 	}
 
-	unsigned long long n = strtoull(argv[1], nullptr, 10);
+	unsigned long n = atoi(argv[1]);
+
+	if(n == 0)
+	{
+		fprintf(stderr, "dim must be > 0\n");
+		return -2;
+	}
 
 	linearstory::LUSystem_CPU<int> sys(n);
 	sys.solve();

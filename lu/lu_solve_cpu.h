@@ -2,6 +2,7 @@
 #define __LU_SOLVER_CPU_H__
 #include <algorithm>
 #include <cstdint>
+#include "matecho.h"
 #include "linsys.cuh"
 
 namespace linearstory
@@ -94,7 +95,7 @@ namespace linearstory
 						val -= host_U.get()[y * dim_pvt + x] * x_arr[x];
 					}
 
-					x_arr[y] = val / host_L.get()[y * dim_pvt + y];
+					x_arr[y] = val / host_U.get()[y * dim_pvt + y];
 				}
 			}
 
@@ -105,6 +106,11 @@ namespace linearstory
 			 */
 			virtual void solve()
 			{
+				#ifdef VERBOSE_DEBUG
+					MatEcho<DataType>(LinearSystem<DataType>::get1D_A_Host(), dim_pvt, dim_pvt);
+					MatEcho<DataType>(LinearSystem<DataType>::get1D_B_Host(), 1, dim_pvt);
+				#endif
+
 				// Perform decomposition
 				Decompose();
 
