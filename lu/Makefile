@@ -10,10 +10,13 @@ NVCCFLAGS=-I../common
 
 all: seq omp cuda
 
+debug_all:
+	$(MAKE) X="-g"
+
 .cpp.o:
-	$(CXX) -c $(CXXFLAGS) $<
+	$(CXX) -c $(CXXFLAGS) $(X) $<
 .cu.o:
-	$(NVCC) -c $(CXXFLAGS) $<
+	$(NVCC) -c $(CXXFLAGS) $(X) $<
 
 
 # Binary Production Rules
@@ -32,3 +35,6 @@ seq: lu_easy.seq
 omp: lu_par.omp
 
 cuda: lu_cuda.cbin
+
+clean:
+	rm *.seq || rm *.cbin || rm *.omp
