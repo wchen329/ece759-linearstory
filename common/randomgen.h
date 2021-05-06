@@ -11,7 +11,7 @@ class RandomGen
 {
 	public:
 		RandomGen() :
-			range(-10, 10),
+			range(-1000, 1000),
 			rd(),
 			gener(rd())
 		{
@@ -34,7 +34,7 @@ class RandomGen<float>
 {
 	public:
 		RandomGen() :
-			range(-10.0, 10.0),
+			range(-100.0, 100.0),
 			rd(),
 			gener(rd())
 		{
