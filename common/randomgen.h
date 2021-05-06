@@ -1,11 +1,11 @@
 #ifndef __RANDOMGEN_H__
 #define __RANDOMGEN_H__
+#include <random>
 
 /* Generic Random Number Generators...
  * using template (partial) specialization for a
  * nice interface
  */
-
 template <class TMP>
 class RandomGen
 {
@@ -16,6 +16,8 @@ class RandomGen
 			gener(rd())
 		{
 		}
+
+		TMP operator()() { return val(); }
 
 		TMP val()
 		{
@@ -38,12 +40,13 @@ class RandomGen<float>
 		{
 		}
 
+		float operator()() { return val(); }
+
 		float val() { return range(gener); }
 
 		std::uniform_real_distribution<float> range;
 		std::random_device rd;
 		std::mt19937_64 gener;
 };
-
 
 #endif
