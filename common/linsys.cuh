@@ -135,10 +135,20 @@ namespace linearstory
 			}
 	
 		protected:
-			/* RawArray get1DData (host)
-			 * Returns the handle to the 1D representation of data.
+			/* RawArray get1D_A (host)
+			 * Returns the handle to the 1D representation of A. 
 			 */
-			 RawArray get1DData_Host() { return this->host_a.get(); }
+			 RawArray get1D_A_Host() { return this->host_a.get(); }
+
+			/* RawArray get1D_X (host)
+			 * Returns the handle to the 1D representation of B.
+			 */
+			 RawArray get1D_X_Host() { return this->host_x.get(); }
+
+			/* RawArray get1D_B (host)
+			 * Returns the handle to the 1D representation of X.
+			 */
+			 RawArray get1D_B_Host() { return this->host_b.get(); }
 
 		private:
 			uint64_t dim;
