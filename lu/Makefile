@@ -1,7 +1,7 @@
 # LU Makefile
 
 CXX=g++
-CXXFLAGS=-I../common
+CXXFLAGS=-I../common -DENABLE_MOCK
 NVCC=nvcc
 NVCCFLAGS=-I../common
 
