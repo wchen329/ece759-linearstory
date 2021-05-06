@@ -49,7 +49,7 @@ namespace linearstory
 				return &(host_a.get()[ind * dim]);
 			}
 
-			DataType& atA(uint32_t x, uint32_t y)
+			DataType& atA(uint32_t y, uint32_t x)
 			{
 				return host_a.get()[(y * dim) + x];
 			}
