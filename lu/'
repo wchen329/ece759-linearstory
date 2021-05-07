@@ -62,7 +62,7 @@ namespace linearstory
 					}
 
 					#ifdef VERBOSE_DEBUG
-//						MatEcho<DataType>(S, dim_S, dim_S);	
+						MatEcho<DataType>(S, dim_S, dim_S);	
 					#endif
 
 					// Calculate S
@@ -88,10 +88,9 @@ namespace linearstory
 					#ifdef VERBOSE_DEBUG
 //						MatEcho<DataType>(lptr, 1, dim_S - 1);	
 //						MatEcho<DataType>(uptr, 1, dim_S - 1);	
-//						MatEcho<DataType>(hopptr, dim_S - 1, dim_S - 1);	
-//						MatEcho<DataType>(L, dim_pvt, dim_pvt);	
-//						MatEcho<DataType>(U, dim_pvt , dim_pvt);	
-					//	assert(dim_offset != 0);
+						MatEcho<DataType>(L, dim_pvt, dim_pvt);	
+						MatEcho<DataType>(U, dim_pvt , dim_pvt);	
+						assert(dim_offset != 0);
 					#endif
 
 					// Do matrix subtraction of S_tmp and outer_product
