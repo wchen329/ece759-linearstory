@@ -1,6 +1,7 @@
 #ifndef __LINSYS_CUH__
 #define __LINSYS_CUH__
 #include <algorithm>
+#include <cctype>
 #include <cstdint>
 #include <iostream>
 #include <memory>
@@ -89,15 +90,38 @@ namespace linearstory
 				bool all_correct = true;
 				for(uint64_t di2 = 0; di2 < dim; ++di2)
 				{
-					if(scratch_output.get()[di2] != host_b.get()[di2])
+					/* Hack!
+					 * Use runtime type checking to change equality function
+					 */
+
+					if(typeid(scratch_output.get()[0]) == typeid(float))
 					{
-						std::cout <<  "[verify] b["  << di2 << "] is INCORRECT. Got Value: " << scratch_output.get()[di2]
-							 << "; Expected Value: " << host_b.get()[di2] << ";" << std::endl;
-						all_correct = false;
+						float err = (scratch_output.get()[di2] - host_b.get()[di2]);
+
+						// OK if less than 0.00 1 (0.1%) error
+						if(err > 0.001)
+						{
+							std::cout <<  "[verify] b["  << di2 << "] is INCORRECT. Got Value: " << scratch_output.get()[di2]
+								 << "; Expected Value: " << host_b.get()[di2] << ";" << std::endl;
+							all_correct = false;
+						}
+						else
+						{
+							std::cout <<  "[verify] b["  << di2 << "] is correct. Value: " << host_b.get()[di2] << std::endl;
+						}
 					}
 					else
 					{
-						std::cout <<  "[verify] b["  << di2 << "] is correct. Value: " << host_b.get()[di2] << std::endl;
+						if(scratch_output.get()[di2] != host_b.get()[di2])
+						{
+							std::cout <<  "[verify] b["  << di2 << "] is INCORRECT. Got Value: " << scratch_output.get()[di2]
+								 << "; Expected Value: " << host_b.get()[di2] << ";" << std::endl;
+							all_correct = false;
+						}
+						else
+						{
+							std::cout <<  "[verify] b["  << di2 << "] is correct. Value: " << host_b.get()[di2] << std::endl;
+						}
 					}
 				}
 
