@@ -1,6 +1,7 @@
 #ifndef __LU_SOLVER_CPU_H___
 #define __LU_SOLVER_CPU_H__
 #include <algorithm>
+#include <cassert>
 #include <cstdint>
 #include "matecho.h"
 #include "linsys.cuh"
@@ -35,7 +36,7 @@ namespace linearstory
 
 					size_t dim_S = dim_pvt - dim_offset;
 
-					// Constant time
+					// Constant Time
 					L[dim_offset + dim_pvt * dim_offset] = 1;
 					U[dim_offset + dim_pvt * dim_offset] = S[dim_offset * dim_S + dim_offset];
 
@@ -43,17 +44,27 @@ namespace linearstory
 					// be the correct values
 					
 					// For all u in U | u has y = dim_offset, u = a
+					size_t col_flat = 1;
 					for(size_t col = dim_offset + 1; col < dim_pvt; ++col)
 					{
-						U[dim_offset * dim_pvt + col] = S[dim_offset * dim_S + col];
+						//U[dim_offset * dim_pvt + col] = S[dim_offset * dim_S + col];
+						U[dim_offset * dim_pvt + col] = S[col_flat];
+						++col_flat;
 					}
 
 					// For all l in L | l has x = dim_offset, l = a/u
+					size_t row_flat = 1;
 					for(size_t row = dim_offset + 1; row < dim_pvt; ++row)
 					{
-						l_buffer.get()[row] = S[row * dim_S + dim_offset] / U[dim_offset * dim_pvt + row];
-						L[row * dim_pvt + dim_offset] = l_buffer.get()[row];
+						//l_buffer.get()[row] = S[row * dim_S + dim_offset] / U[dim_offset * dim_pvt + row];
+						l_buffer.get()[row] = S[(row) * dim_S] / U[dim_offset * dim_pvt + row];
+						L[row * dim_pvt + dim_offset] = l_buffer.get()[row_flat];
+						++row_flat;
 					}
+
+					#ifdef VERBOSE_DEBUG
+						MatEcho<DataType>(S, dim_S, dim_S);	
+					#endif
 
 					// Calculate S
 					// copy the submatrix of A[1:,1:] into S. Reorigin it.
@@ -67,11 +78,21 @@ namespace linearstory
 						}
 					}
 
+					#ifdef VERBOSE_DEBUG
+						//MatEcho<DataType>(host_S_tmp.get(), dim_S - 1, dim_S - 1);	
+					#endif
+
 					// Calculate the final value of S.
-					DataType* lptr = l_buffer.get();
+					DataType* lptr = l_buffer.get() + dim_offset;
 					DataType* uptr = U + (dim_offset * dim_pvt);
 					DataType* hopptr = host_op.get();
 					mat_outer_product(lptr, uptr, hopptr, dim_S - 1);
+
+					#ifdef VERBOSE_DEBUG
+						MatEcho<DataType>(lptr, 1, dim_S - 1);	
+						MatEcho<DataType>(uptr, 1, dim_S - 1);	
+						assert(dim_offset != 1);
+					#endif
 
 					// Do matrix subtraction of S_tmp and outer_product
 					mat_sub(host_S_tmp.get(), hopptr, S, dim_S - 1);
