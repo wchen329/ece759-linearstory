@@ -1,6 +1,9 @@
 #include "gmres.h"
 #include "helper.h"
 
+// translated from
+// https://en.wikipedia.org/wiki/Generalized_minimal_residual_method#Example_code
+
 void arnoldi(const float *A, float *Q, float *H, size_t n, const int iteration,
              const int max_iterations) {
   float *q = Q + n * (iteration + 1);
@@ -15,6 +18,24 @@ void arnoldi(const float *A, float *Q, float *H, size_t n, const int iteration,
   h[iteration + 1] = norm(q, n);
   scalar_mul(q, 1 / h[iteration + 1], q, n);
   delete[] temp;
+}
+
+void givens_rotation(float v1, float v2, float *cs, float *sn, int iteration) {
+  float t = sqrt(v1 * v1 + v2 * v2);
+  cs[iteration] = v1 / t;
+  sn[iteration] = v2 / t;
+}
+
+void apply_givens_rotation(float *h, float *cs, float *sn, int iteration) {
+  for (int i = 0; i < iteration; i++) {
+    float temp = cs[i] * h[i] + sn[i] * h[i + 1];
+    h[i + 1] = -sn[i] * h[i] + cs[i] * h[i + 1];
+    h[i] = temp;
+  }
+  givens_rotation(h[iteration], h[iteration + 1], cs, sn, iteration);
+  h[iteration] =
+      cs[iteration] * h[iteration] + sn[iteration] * h[iteration + 1];
+  h[iteration + 1] = 0.0;
 }
 
 void gmres(const float *A, const float *b, const float *x, size_t n, float *e,
@@ -54,7 +75,23 @@ void gmres(const float *A, const float *b, const float *x, size_t n, float *e,
   // H is (m + 1) x m matrix in column major order
   float *H = new float[(max_iterations + 1) * max_iterations];
 
-  for (int iteration = 0; iteration < max_iterations; iteration++) {
+  int iteration;
+  for (iteration = 0; iteration < max_iterations; iteration++) {
     arnoldi(A, Q, H, n, iteration, max_iterations);
+    apply_givens_rotation(H + (max_iterations + 1) * iteration, cs, sn,
+                          iteration);
+
+    beta[iteration + 1] = -sn[iteration] * beta[iteration];
+    beta[iteration] = cs[iteration] * beta[iteration];
+    error = abs(beta[iteration + 1]) / b_norm;
+    e[iteration + 1] = error;
+
+    if (error <= threshold) {
+      break;
+    }
+  }
+
+  if (iteration == max_iterations) {
+    iteration--;
   }
 }
