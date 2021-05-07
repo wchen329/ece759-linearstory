@@ -21,7 +21,9 @@ class RandomGen
 
 		TMP val()
 		{
-			return range(gener);
+			TMP ret = 0;
+			while((ret = range(gener)) == 0);
+			return ret;
 		}
 
 		std::uniform_int_distribution<TMP> range;
@@ -42,7 +44,12 @@ class RandomGen<float>
 
 		float operator()() { return val(); }
 
-		float val() { return range(gener); }
+		float val()
+		{
+			float ret = 0;
+			while((ret = range(gener)) == 0);
+			return ret;
+		}
 
 		std::uniform_real_distribution<float> range;
 		std::random_device rd;
