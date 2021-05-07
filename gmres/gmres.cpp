@@ -1,7 +1,7 @@
 #include "gmres.h"
 #include "helper.h"
 
-// translated from
+// translated from Matlab code at
 // https://en.wikipedia.org/wiki/Generalized_minimal_residual_method#Example_code
 
 void arnoldi(const float *A, float *Q, float *H, size_t n, const int iteration,
@@ -94,4 +94,7 @@ void gmres(const float *A, const float *b, const float *x, size_t n, float *e,
   if (iteration == max_iterations) {
     iteration--;
   }
+
+  // need simple linear solver here, like LU
+  // if I procrastinated less, would link up code here with LU code
 }
