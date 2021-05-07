@@ -19,11 +19,11 @@ __global__ void jacobi_kernel(float *A, float *B, float *x, float *x_new, int n)
 
 
 	extern __shared__ float shared_memory[];
-	float *shared_x = shared_memory;
-	float *shared_x_new = shared_x + blockDim.x;
-	float *shared_B = shared_x_new + blockDim.x;
+	float *shared_B = shared_memory;
+	float *shared_x_new = shared_B + blockDim.x;
+	// float *shared_x = shared_x_new + blockDim.x;
 
-	shared_x[threadIdx.x] = x[tx];
+	// shared_x[threadIdx.x] = x[tx];
 	shared_B[threadIdx.x] = B[tx];
 	__syncthreads();
 
@@ -50,7 +50,7 @@ void jacobi(float *A, float *B, float *x, int n, int threads_per_block)
 	const int ITERATION_LIMIT = 200;
 
 	int numBlocks = (int)ceil( (double)n/(double)threads_per_block);
-	int shared_space = sizeof(float)*3*threads_per_block; // for x, x_new, and B
+	int shared_space = sizeof(float)*2*threads_per_block; // for x, x_new, and B
 	
 	float *dA, *dB, *dx, *dx_new;
 
@@ -85,7 +85,7 @@ void jacobi(float *A, float *B, float *x, int n, int threads_per_block)
 
 	cudaMemcpy(x, dx, sizeof(float) * n, cudaMemcpyDeviceToHost);
 
-	printf("ms: %f \n", ms);
+	printf("%f \n", ms);
     // printf("Result: ");
 	// print_arr(x, n);
 

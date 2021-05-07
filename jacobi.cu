@@ -45,6 +45,11 @@ int main(int argc, char **argv)
     int n = 1024;
     int threads_per_block = 32;
 
+    if (argc > 2){
+        n = atoi(argv[1]);
+        threads_per_block = atoi(argv[2]);
+    }
+
 	float* hx = new float[n];
 	float* hA = new float[n*n];
 	float* hB = new float[n];
