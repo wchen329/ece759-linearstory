@@ -26,7 +26,7 @@ int main(int argc, char ** argv)
 		return -2;
 	}
 
-	linearstory::LUSystem_CPU<int> sys(n);
+	linearstory::LUSystem_CPU<float> sys(n);
 	sys.solve();
 	sys.verify();
 }

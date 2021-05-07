@@ -23,32 +23,31 @@ namespace linearstory
 			virtual void Decompose() 
 			{
 				// Decompose using iteration 
-				for(size_t dim_remain = dim_pvt; dim_remain > 0; --dim_remain)
+				for(size_t dim_offset = 0; dim_offset < dim_pvt; ++dim_offset)
 				{
 					// Set pivots of L and U
-					size_t dim_offset = dim_pvt - dim_remain;
 					size_t radial_offset = dim_pvt * dim_offset  + dim_offset;
 
-					DataType* L = host_L.get() + radial_offset;
-					DataType* U = host_U.get() + radial_offset;
+					DataType* L = host_L.get();
+					DataType* U = host_U.get();
 
-					L[0] = 1;
-					U[0] = LinearSystem<DataType>::atA(0,0);
+					L[dim_offset + dim_pvt * dim_offset] = 1;
+					U[dim_offset + dim_pvt * dim_offset] = LinearSystem<DataType>::atA(dim_offset, dim_offset);
 
 					// Set this row (dim_offset) and this column to
 					// be the correct values
 					
 					// For all u in U | u has y = dim_offset, u = a
-					for(size_t col = 0; col < dim_pvt; ++col)
+					for(size_t col = dim_offset + 1; col < dim_pvt; ++col)
 					{
 						U[dim_offset * dim_pvt + col] = LinearSystem<DataType>::atA(dim_offset, col);
 					}
 
-					// For all l in L | l has x = dim_offset, l = a
-					for(size_t row = 0; row < dim_pvt; ++row)
+					// For all l in L | l has x = dim_offset, l = a/u
+					for(size_t row = dim_offset + 1; row < dim_pvt; ++row)
 					{
 						// Bad locality... might want to optimize by creating a transpose version of A as well.
-						L[row * dim_pvt + dim_offset] = LinearSystem<DataType>::atA(row, dim_offset);
+						L[row * dim_pvt + dim_offset] = LinearSystem<DataType>::atA(row, dim_offset) / U[dim_offset * dim_pvt + row];
 					}
 
 				}
@@ -113,6 +112,11 @@ namespace linearstory
 
 				// Perform decomposition
 				Decompose();
+
+				#ifdef VERBOSE_DEBUG
+					MatEcho<DataType>(host_L.get(), dim_pvt, dim_pvt);
+					MatEcho<DataType>(host_U.get(), dim_pvt, dim_pvt);
+				#endif
 
 				// Get k
 				forward_sub();
