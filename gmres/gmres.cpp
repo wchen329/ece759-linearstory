@@ -3,17 +3,17 @@
 
 void arnoldi(const float *A, float *Q, float *H, size_t n, const int iteration,
              const int max_iterations) {
-  float *q = Q + n * iteration;
-  float *h = H + (max_iterations + 1) * (iteration - 1);
-  mat_vec_mul(A, Q + n * (iteration - 1), q, n);
+  float *q = Q + n * (iteration + 1);
+  float *h = H + (max_iterations + 1) * iteration;
+  mat_vec_mul(A, Q + n * iteration, q, n);
   float *temp = new float[n];
-  for (int i = 0; i < iteration; i++) {
+  for (int i = 0; i <= iteration; i++) {
     h[i] = dot_product(q, Q + i * n, n);
     scalar_mul(Q + i * n, h[i], temp, n);
     vec_sub(q, temp, q, n);
   }
-  h[iteration] = norm(q, n);
-  scalar_mul(q, 1 / h[iteration], q, n);
+  h[iteration + 1] = norm(q, n);
+  scalar_mul(q, 1 / h[iteration + 1], q, n);
   delete[] temp;
 }
 
@@ -55,5 +55,6 @@ void gmres(const float *A, const float *b, const float *x, size_t n, float *e,
   float *H = new float[(max_iterations + 1) * max_iterations];
 
   for (int iteration = 0; iteration < max_iterations; iteration++) {
+    arnoldi(A, Q, H, n, iteration, max_iterations);
   }
 }
