@@ -79,7 +79,7 @@ namespace linearstory
 
 					for(uint64_t dij = 0; dij < dim; ++ dij)
 					{
-						dot_prod += (*this)[din][dij] * host_b.get()[dij];
+						dot_prod += (*this)[din][dij] * host_x.get()[dij];
 					}
 
 					scratch_output.get()[din] = dot_prod;
@@ -89,15 +89,15 @@ namespace linearstory
 				bool all_correct = true;
 				for(uint64_t di2 = 0; di2 < dim; ++di2)
 				{
-					if(scratch_output.get()[di2] == host_x.get()[di2])
+					if(scratch_output.get()[di2] != host_b.get()[di2])
 					{
-						std::cout <<  "[verify] b["  << di2 << "] is INCORRECT. Got Value: " << host_x.get()[di2]
-							 << "; Expected Value: " << scratch_output.get()[di2] << ";" << std::endl;
+						std::cout <<  "[verify] b["  << di2 << "] is INCORRECT. Got Value: " << scratch_output.get()[di2]
+							 << "; Expected Value: " << host_b.get()[di2] << ";" << std::endl;
 						all_correct = false;
 					}
 					else
 					{
-						std::cout <<  "[verify] b["  << di2 << "] is correct. Value: " << host_x.get()[di2] << std::endl;
+						std::cout <<  "[verify] b["  << di2 << "] is correct. Value: " << host_b.get()[di2] << std::endl;
 					}
 				}
 
