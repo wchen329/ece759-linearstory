@@ -29,7 +29,6 @@ namespace linearstory
 				// S already initalized to A
 
 				// Decompose using iteration 
-				#pragma omp for
 					for(size_t dim_offset = 0; dim_offset < dim_pvt; ++dim_offset)
 					{
 						// Set pivots of L and U
@@ -47,22 +46,23 @@ namespace linearstory
 						
 						// For all u in U | u has y = dim_offset, u = a
 						size_t col_flat = 1;
-						for(size_t col = dim_offset + 1; col < dim_pvt; ++col)
-						{
-							U[dim_offset * dim_pvt + col] = S[col_flat];
-							++col_flat;
-						}
+						#pragma omp for
+							for(size_t col = dim_offset + 1; col < dim_pvt; ++col)
+							{
+								U[dim_offset * dim_pvt + col] = S[col_flat];
+								++col_flat;
+							}
 
 						// For all l in L | l has x = dim_offset, l = a/u
 						size_t row_flat = 1;
 						l_buffer.get()[0] = 1;
-
-						for(size_t row = dim_offset + 1; row < dim_pvt; ++row)
-						{
-							l_buffer.get()[row_flat - 1] = S[row_flat * dim_S] / S[0];
-							L[(row) * dim_pvt + dim_offset] = l_buffer.get()[row_flat - 1];
-							++row_flat;
-						}
+						#pragma omp for
+							for(size_t row = dim_offset + 1; row < dim_pvt; ++row)
+							{
+								l_buffer.get()[row_flat - 1] = S[row_flat * dim_S] / S[0];
+								L[(row) * dim_pvt + dim_offset] = l_buffer.get()[row_flat - 1];
+								++row_flat;
+							}
 
 						#ifdef VERBOSE_DEBUG
 	//						MatEcho<DataType>(S, dim_S, dim_S);	
@@ -71,14 +71,15 @@ namespace linearstory
 						// Calculate S
 						// copy the submatrix of A[1:,1:] into S. Reorigin it.
 						size_t counter = 0;
-						for(size_t sy = 1; sy < dim_S; ++sy)
-						{
-							for(size_t sx = 1; sx < dim_S; ++sx)
+						#pragma omp for
+							for(size_t sy = 1; sy < dim_S; ++sy)
 							{
-								host_S_tmp.get()[counter] = S[sy * dim_S + sx];
-								++counter;
+								for(size_t sx = 1; sx < dim_S; ++sx)
+								{
+									host_S_tmp.get()[counter] = S[sy * dim_S + sx];
+									++counter;
+								}
 							}
-						}
 
 						// Calculate the final value of S.
 						DataType* lptr = l_buffer.get();
@@ -138,7 +139,7 @@ namespace linearstory
 				DataType* k = host_k.get();
 				std::fill_n(k, dim_pvt, 0);
 
-				#pragma omp for
+				// #pragma omp for
 					for(size_t y = 0; y < dim_pvt; ++y)
 					{
 						DataType val = LinearSystem<DataType>::atB(y);
@@ -160,7 +161,7 @@ namespace linearstory
 			{
 				DataType* x_arr = LinearSystem<DataType>::get1D_X_Host();
 				// x is already zero filled
-				#pragma omp for
+				// #pragma omp for
 					for(size_t y = dim_pvt - 1; y > 0; --y)
 					{
 						DataType val = host_k.get()[y];
@@ -178,7 +179,7 @@ namespace linearstory
 				DataType val = host_k.get()[0];
 
 				// Solve U and put the result into x
-				#pragma omp for
+				// #pragma omp for
 					for(size_t x = dim_pvt - 1; x > 0; --x)
 					{
 						val -= host_U.get()[x] * x_arr[x];

@@ -5,4 +5,5 @@
 #SBATCH -o lu_solve.out -e lu_solve.err
 make clean
 make
-./lu_par.omp 10
+./lu_easy.seq 512
+./lu_par.omp 512

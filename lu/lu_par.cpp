@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <chrono>
 #include "linsys.cuh"
-
+#include <omp.h>
 #include "lu_solve_par.h"
 
 /* LU Decomposition, sequential
@@ -19,6 +19,7 @@ int main(int argc, char ** argv)
 	}
 
 	unsigned long n = atoi(argv[1]);
+	omp_set_num_threads(10);
 
 	if(n == 0)
 	{
@@ -40,7 +41,7 @@ int main(int argc, char ** argv)
 	end = high_resolution_clock::now();
     duration_sec = std::chrono::duration_cast<duration<double, std::milli>>(end - start);
 
-	printf("ms: %f \n", duration_sec.count());
+	printf("par ms: %f \n", duration_sec.count());
 
-	sys.verify();
+	// sys.verify();
 }
