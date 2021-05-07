@@ -27,8 +27,8 @@ debug_all:
 	$(CXX) $< $(OBJS) $(X) $(CXXFLAGS) -fopenmp -o $@
 # Doesn't do standalone compilation of entry point object, but OK
 
-.cpp.cbin: $(OBJS)
-	$(CXX) $< $(OBJS) $(X) $(NVCCFLAGS) -o $@
+.cu.cbin: $(OBJS)
+	$(NVCC) $< $(OBJS) $(X) $(NVCCFLAGS) -o $@
 
 seq: lu_easy.seq 
 

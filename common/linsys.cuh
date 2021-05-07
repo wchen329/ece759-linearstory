@@ -26,7 +26,7 @@ namespace linearstory
 
 	typedef uint32_t Coeff;
 
-	__host__ template<class DataType> class LinearSystem
+	template<class DataType> class LinearSystem
 	{
 		public:
 
