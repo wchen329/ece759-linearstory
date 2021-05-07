@@ -66,8 +66,8 @@ namespace linearstory
 				{
 					DataType val = LinearSystem<DataType>::atB(y);
 
-					// Solve L and put the result into k (going backwards)
-					for(size_t x = y; x < dim_pvt; ++x)
+					// Solve L and put the result into k
+					for(size_t x = 0; x < y; ++x)
 					{
 						val -= host_L.get()[y * dim_pvt + x] * k[x];
 					}
@@ -89,7 +89,7 @@ namespace linearstory
 					DataType val = host_k.get()[y];
 
 					// Solve U and put the result into x
-					for(size_t x = y; x < dim_pvt; ++x)
+					for(size_t x = 0; x < y; ++x)
 					{
 						val -= host_U.get()[y * dim_pvt + x] * x_arr[x];
 					}
@@ -120,9 +120,16 @@ namespace linearstory
 
 				// Get k
 				forward_sub();
+
+				#ifdef VERBOSE_DEBUG
+					MatEcho<DataType>(host_k.get(), 1, dim_pvt);
+				#endif
 				
 				// Get x
 				backward_sub();
+				#ifdef VERBOSE_DEBUG
+					MatEcho<DataType>(LinearSystem<DataType>::get1D_X_Host(), 1, dim_pvt);
+				#endif
 			}
 
 			typedef std::unique_ptr<DataType, std::default_delete<DataType[]>> MArray;
@@ -130,6 +137,7 @@ namespace linearstory
 				dim_pvt(dim),
 				host_L(new DataType[dim * dim]),
 				host_U(new DataType[dim * dim]),
+				host_S(new DataType[dim * dim]),
 				host_k(new DataType[dim]),
 				LinearSystem<DataType>(dim)
 			{
@@ -142,6 +150,7 @@ namespace linearstory
 		protected:
 			MArray host_L;
 			MArray host_U;
+			MArray host_S;
 			MArray host_k;
 		private:
 			size_t dim_pvt;
