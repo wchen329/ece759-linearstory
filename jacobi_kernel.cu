@@ -84,8 +84,8 @@ void jacobi(float *A, float *B, float *x, int n, int threads_per_block)
 	cudaMemcpy(x, dx, sizeof(float) * n, cudaMemcpyDeviceToHost);
 
 	printf("ms: %f \n", ms);
-    printf("Result: ");
-	print_arr(x, n);
+    // printf("Result: ");
+	// print_arr(x, n);
 
 	cudaFree(dA);
 	cudaFree(dB);
