@@ -124,7 +124,8 @@ int main(int argc, char **argv)
     float x_test[4] = {1, 1};
 */
     start = high_resolution_clock::now();
-    jacobi_omp(A, B, x, n);
+    #pragma omp parallel
+        jacobi_omp(A, B, x, n);
     end = high_resolution_clock::now();
 
     duration_sec = std::chrono::duration_cast<duration<double, std::milli>>(end - start);
@@ -133,6 +134,7 @@ int main(int argc, char **argv)
     // printf("Result: ");
     // print_arr(x,n);
 
+    // Uncomment these 2 lines for verification
     matmul(A, x, test, n);
     verify(B, test, n);
 
