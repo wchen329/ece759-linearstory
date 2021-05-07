@@ -71,13 +71,13 @@ namespace linearstory
 
 			// Calculate S
 			// copy the submatrix of A[1:,1:] into S. Reorigin it.
-			size_t counter = ordinal - 1;
+			size_t counter = (ordinal - 1) * dim_S;
 			for (size_t sy = ordinal; sy < dim_S; sy += incr)
 			{
 				for (size_t sx = 1; sx < dim_S; ++sx)
 				{
 					S_tmp[counter] = S[sy * dim_S + sx];
-					counter += incr;
+					++counter;
 				}
 			}
 
@@ -100,7 +100,7 @@ namespace linearstory
 
 			__syncthreads();
 
-			// Perform a matrix-matrix sum
+			// Perform a matrix-matrix subtract
 			for (size_t i = ordinal - 1; i < rank; i += incr)
 			{
 				for (size_t j = 0; j < rank; ++j)
@@ -114,6 +114,7 @@ namespace linearstory
 		}
 	}
 
+	// Unusable, incorrect kernel.
 	template<class DataType>
 	__global__ void lu_forward_sub(DataType* L, DataType* B, DataType * k, size_t dim_pvt)
 	{
@@ -127,13 +128,18 @@ namespace linearstory
 			// Solve L and put the result into k
 			for (size_t x = 0; x < y; ++x)
 			{
+				// RAW Hazard... not usable
 				val -= L[y * dim_pvt + x] * k[x];
 			}
 
 			k[y] = val / L[y * dim_pvt + y];
 		}
+
+		__syncthreads();
 	}
 
+
+	// Unusable, incorrect kernel.
 	template<class DataType>
 	__global__ void lu_back_sub(DataType* U, DataType* k, DataType* x, size_t dim_pvt)
 	{
@@ -148,6 +154,7 @@ namespace linearstory
 			// Solve U and put the result into x
 			for (size_t x_c = dim_pvt - 1; x_c > y; --x_c)
 			{
+				// RAW Hazard... not usable
 				val -= U[y * dim_pvt + x_c] * x[x_c];
 			}
 
