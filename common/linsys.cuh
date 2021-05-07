@@ -99,7 +99,7 @@ namespace linearstory
 						float err = (scratch_output.get()[di2] - host_b.get()[di2]);
 
 						// OK if less than 0.00 1 (0.1%) error
-						if(err > 0.001)
+						if(fabs(err) > 0.001)
 						{
 							std::cout <<  "[verify] b["  << di2 << "] is INCORRECT. Got Value: " << scratch_output.get()[di2]
 								 << "; Expected Value: " << host_b.get()[di2] << ";" << std::endl;
