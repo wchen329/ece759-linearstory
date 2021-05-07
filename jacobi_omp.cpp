@@ -10,6 +10,8 @@
 #include "jacobi_omp.h"
 #include "omp.h"
 
+
+// Multiply A by the x calculated from Jacobi algorithm (used for verification)
 void matmul(float* A, float* x, float* B_test, int n)
 {
     for(int i = 0; i < n; i++)
@@ -22,7 +24,7 @@ void matmul(float* A, float* x, float* B_test, int n)
     return;
 }
 
-
+// Used to verify that array B = test
 void verify(float* B, float* test, int n)
 {
     bool flag = true;
@@ -44,12 +46,14 @@ void verify(float* B, float* test, int n)
     return;
 }
 
+// Prints arr of size n
 void print_arr(float* arr, int n)
 {
     for (int i = 0; i < n; i++) printf("%f ", arr[i]);
     printf("\n");
 }
 
+// Omp implementation of Jacobi Algorithm
 void jacobi_omp(float *A, float *B, float *x, int n)
 {
     const int ITERATION_LIMIT = 200;

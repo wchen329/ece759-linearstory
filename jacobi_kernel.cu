@@ -70,10 +70,12 @@ void jacobi(float *A, float *B, float *x, int n, int threads_per_block)
 	
 	cudaEventRecord(start);
 
-	for (int k = 0; k < ITERATION_LIMIT; k++)
+	for (int k = 0; k < ITERATION_LIMIT/2; k++)
     {
 		jacobi_kernel<<<numBlocks, threads_per_block, shared_space>>>(dA, dB, dx, dx_new, n);
-		cudaMemcpy(dx, dx_new, sizeof(float) * n, cudaMemcpyDeviceToDevice);
+		jacobi_kernel<<<numBlocks, threads_per_block, shared_space>>>(dA, dB, dx_new, dx, n);
+
+		// cudaMemcpy(dx, dx_new, sizeof(float) * n, cudaMemcpyDeviceToDevice);
 	}
 	cudaEventRecord(stop);
 	cudaEventSynchronize(stop);

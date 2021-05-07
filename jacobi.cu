@@ -42,7 +42,7 @@ void verify(float* B, float* test, int n)
 
 int main(int argc, char **argv)
 {
-    int n = 128;
+    int n = 1024;
     int threads_per_block = 32;
 
 	float* hx = new float[n];
