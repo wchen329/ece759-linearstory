@@ -84,18 +84,29 @@ namespace linearstory
 				DataType* x_arr = LinearSystem<DataType>::get1D_X_Host();
 				// x is already zero filled
 
-				for(size_t y = dim_pvt - 1; y >= 0; --y)
+				for(size_t y = dim_pvt - 1; y > 0; --y)
 				{
 					DataType val = host_k.get()[y];
 
 					// Solve U and put the result into x
-					for(size_t x = 0; x < y; ++x)
+					for(size_t x = dim_pvt - 1; x > y; --x)
 					{
 						val -= host_U.get()[y * dim_pvt + x] * x_arr[x];
 					}
 
 					x_arr[y] = val / host_U.get()[y * dim_pvt + y];
 				}
+
+				// Unroll the last iteration, due to underflow
+				DataType val = x_arr[0];
+
+				// Solve U and put the result into x
+				for(size_t x = dim_pvt - 1; x > 0; --x)
+				{
+					val -= host_U.get()[x] * x_arr[x];
+				}
+
+				x_arr[0] = val / host_U.get()[0];
 			}
 
 			/* Solve

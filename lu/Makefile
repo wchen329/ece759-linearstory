@@ -37,4 +37,4 @@ omp: lu_par.omp
 cuda: lu_cuda.cbin
 
 clean:
-	rm *.seq || rm *.cbin || rm *.omp
+	rm *.seq || rm *.cbin || rm *.omp || true
