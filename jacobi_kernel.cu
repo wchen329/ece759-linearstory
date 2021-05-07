@@ -31,10 +31,10 @@ __global__ void jacobi_kernel(float *A, float *B, float *x, float *x_new, int n)
 	
 	for (int j = 0; j < n; j++)
 	{
-		LU_sum += A[tx*n + j]*shared_x[j];
+		LU_sum += A[tx*n + j]*x[j];
 		// LU_sum += A[tx*n + j]*x[j];
 	}
-	LU_sum -= A[tx*n+tx]*shared_x[threadIdx.x];
+	LU_sum -= A[tx*n+tx]*x[threadIdx.x];
 	shared_x_new[threadIdx.x] = (shared_B[threadIdx.x] - LU_sum)/A[tx*n + tx];
 	// LU_sum -= A[tx*n+tx]*x[tx];
 	// x_new[tx] = (B[tx] - LU_sum)/A[tx*n + tx];
