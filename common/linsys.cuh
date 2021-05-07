@@ -75,7 +75,7 @@ namespace linearstory
 				// Try matmul'ing to recreate the output (seq).
 				for(uint64_t din = 0; din < dim; ++din)
 				{
-					uint32_t dot_prod = 0;
+					DataType dot_prod = 0;
 
 					for(uint64_t dij = 0; dij < dim; ++ dij)
 					{

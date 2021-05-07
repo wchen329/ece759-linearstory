@@ -36,7 +36,7 @@ class RandomGen<float>
 {
 	public:
 		RandomGen() :
-			range(-100.0, 100.0),
+			range(-10.0, 10.0),
 			rd(),
 			gener(rd())
 		{
