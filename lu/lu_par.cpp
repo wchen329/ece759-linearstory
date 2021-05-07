@@ -14,12 +14,18 @@ int main(int argc, char ** argv)
 	// Argument check
 	if(argc < 2)
 	{
-		fprintf(stdout, "Usage: lu_easy n (n is a dim)\n");
+		fprintf(stdout, "Usage: lu_par n (n is a dim)\n");
+		exit(-1);
+	}
+	if (argc < 3)
+	{
+		fprintf(stdout, "Usage: lu_par t unspecified\n");
 		exit(-1);
 	}
 
 	unsigned long n = atoi(argv[1]);
-	omp_set_num_threads(10);
+	int t = atoi(argv[2]);
+	omp_set_num_threads(t);
 
 	if(n == 0)
 	{
@@ -35,13 +41,14 @@ int main(int argc, char ** argv)
 	linearstory::LUSystem_CPU<float> sys(n);
 
 	start = high_resolution_clock::now();
-
-	sys.solve();
+	#pragma omp parallel
+		sys.solve();
 
 	end = high_resolution_clock::now();
     duration_sec = std::chrono::duration_cast<duration<double, std::milli>>(end - start);
 
 	printf("par ms: %f \n", duration_sec.count());
 
+	// Uncomment to enable verification
 	// sys.verify();
 }

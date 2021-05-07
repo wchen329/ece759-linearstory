@@ -139,7 +139,7 @@ namespace linearstory
 				DataType* k = host_k.get();
 				std::fill_n(k, dim_pvt, 0);
 
-				// #pragma omp for
+				#pragma omp for
 					for(size_t y = 0; y < dim_pvt; ++y)
 					{
 						DataType val = LinearSystem<DataType>::atB(y);
@@ -161,7 +161,7 @@ namespace linearstory
 			{
 				DataType* x_arr = LinearSystem<DataType>::get1D_X_Host();
 				// x is already zero filled
-				// #pragma omp for
+				#pragma omp for
 					for(size_t y = dim_pvt - 1; y > 0; --y)
 					{
 						DataType val = host_k.get()[y];
@@ -179,7 +179,7 @@ namespace linearstory
 				DataType val = host_k.get()[0];
 
 				// Solve U and put the result into x
-				// #pragma omp for
+				#pragma omp for
 					for(size_t x = dim_pvt - 1; x > 0; --x)
 					{
 						val -= host_U.get()[x] * x_arr[x];
