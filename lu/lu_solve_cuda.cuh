@@ -92,7 +92,7 @@ namespace linearstory
 					MatEcho<DataType>(s_b.get(), dim_pvt - itr , dim_pvt - itr);
 #endif
 
-					lu_decompose<DataType> <<<10, threads_per_block >>>(
+					lu_decompose<DataType> <<<(dim_pvt + threads_per_block - 1)/threads_per_block, threads_per_block >>>(
 						device_A.raw(),
 						device_B.raw(),
 						device_X.raw(),
