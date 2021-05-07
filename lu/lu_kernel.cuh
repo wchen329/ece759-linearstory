@@ -71,13 +71,14 @@ namespace linearstory
 
 			// Calculate S
 			// copy the submatrix of A[1:,1:] into S. Reorigin it.
-			size_t counter = (ordinal - 1) * dim_S;
 			for (size_t sy = ordinal; sy < dim_S; sy += incr)
 			{
 				for (size_t sx = 1; sx < dim_S; ++sx)
 				{
-					S_tmp[counter] = S[sy * dim_S + sx];
-					++counter;
+					size_t sy_out = (sy - 1);
+					size_t sx_out = (sx - 1);
+					size_t raw_index = sy_out * dim_S + sx_out - (sy - 1);
+					S_tmp[raw_index] = S[sy * dim_S + sx];
 				}
 			}
 
