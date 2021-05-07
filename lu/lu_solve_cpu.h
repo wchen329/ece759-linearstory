@@ -98,7 +98,7 @@ namespace linearstory
 				}
 
 				// Unroll the last iteration, due to underflow
-				DataType val = x_arr[0];
+				DataType val = host_k.get()[0];
 
 				// Solve U and put the result into x
 				for(size_t x = dim_pvt - 1; x > 0; --x)
