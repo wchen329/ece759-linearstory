@@ -35,8 +35,16 @@ namespace linearstory
 			L[ind * dim_full + ind] = 1;
 			U[ind * dim_full + ind] = S[0];
 		}
-
 		else
+		{
+		}
+
+		__syncthreads();
+		
+
+		// The zero ordinal is no more
+		ordinal++;
+
 		{
 			// For all u in U | u has y = ind, u = a
 			size_t col_flat = ordinal;
@@ -48,6 +56,8 @@ namespace linearstory
 				col_flat += incr;
 			}
 
+			__syncthreads();
+
 			// For all l in L | l has x = ind, l = a/u
 			size_t row_flat = ordinal;
 			for (size_t row = ind + ordinal; row < dim_full; row += incr)
@@ -56,6 +66,8 @@ namespace linearstory
 				L[(row) * dim_full + ind] = l_buffer[row_flat - 1];
 				row_flat += incr;
 			}
+
+			__syncthreads();
 
 			// Calculate S
 			// copy the submatrix of A[1:,1:] into S. Reorigin it.
@@ -98,6 +110,7 @@ namespace linearstory
 				}
 			}
 
+			__syncthreads();
 		}
 	}
 
@@ -128,7 +141,7 @@ namespace linearstory
 		int ordinal = threadIdx.x + blockDim.x * blockIdx.x;
 
 		int iter = blockDim.x * gridDim.x;
-		for (size_t y = 0; y < dim_pvt; y += iter)
+		for (size_t y = ordinal; y < dim_pvt; y += iter)
 		{
 			DataType val = k[y];
 
